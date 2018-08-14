@@ -26,24 +26,26 @@ includes:
 - ./includes/settings/tk-photoshopcc.yml
 - ./includes/settings/tk-shell.yml
 - ./includes/settings/tk-shotgun.yml
+#- ./includes/settings/tk-shotgun-folders.yml
 
 ################################################################################
 # configuration for all engines to load in a project context
 
 engines:
-  tk-3dsmaxplus: "@settings.tk-3dsmaxplus.project"
+#  tk-3dsmaxplus: "@settings.tk-3dsmaxplus.project"
   tk-desktop: "@settings.tk-desktop.project"
-  tk-flame: "@settings.tk-flame.project"
-  tk-hiero: "@settings.tk-nuke.hiero.project"
+#  tk-flame: "@settings.tk-flame.project"
+#  tk-hiero: "@settings.tk-nuke.hiero.project"
   tk-houdini: "@settings.tk-houdini.project"
   tk-mari: "@settings.tk-mari.project"
   tk-maya: "@settings.tk-maya.project"
-  tk-motionbuilder: "@settings.tk-motionbuilder.project"
+#  tk-motionbuilder: "@settings.tk-motionbuilder.project"
   tk-nuke: "@settings.tk-nuke.project"
   tk-nukestudio: "@settings.tk-nuke.nukestudio.project"
   tk-photoshopcc: "@settings.tk-photoshopcc.project"
   tk-shell: "@settings.tk-shell.project"
   tk-shotgun: "@settings.tk-shotgun.project"
+#  tk-shotgun-folders: "@settings.tk-shotgun-folders.project"
 
 ################################################################################
 # reference all of the common frameworks

@@ -29,18 +29,20 @@ includes:
 - ./includes/settings/tk-nuke.yml
 - ./includes/settings/tk-shell.yml
 - ./includes/settings/tk-shotgun.yml
+#- ./includes/settings/tk-shotgun-folders.yml
 
 ################################################################################
 # configuration for all engines to load in a sequence context
 
 engines:
-  tk-3dsmaxplus: "@settings.tk-3dsmaxplus.sequence"
+#  tk-3dsmaxplus: "@settings.tk-3dsmaxplus.sequence"
   tk-houdini: "@settings.tk-houdini.sequence"
   tk-maya: "@settings.tk-maya.sequence"
-  tk-motionbuilder: "@settings.tk-motionbuilder.sequence"
+#  tk-motionbuilder: "@settings.tk-motionbuilder.sequence"
   tk-nuke: "@settings.tk-nuke.sequence"
   tk-shell: "@settings.tk-shell.sequence"
   tk-shotgun: "@settings.tk-shotgun.sequence"
+#  tk-shotgun-folders: "@settings.tk-shotgun-folders.sequence"
 
 ################################################################################
 # reference all of the common frameworks

@@ -31,3 +31,58 @@ path.windows.hiero: C:\Program Files\Nuke11.1v3\Nuke11.1.exe
 path.linux.rv: "rv"
 path.mac.rv: "/Applications/RV64.app"
 path.windows.rv: C:\Program Files\Shotgun\RV-7.2.3\bin\rv.exe
+
+#
+# Nuke
+#
+nuke_mac: /Applications/Program Files/Nuke11.1v3/Nuke11.1.exe
+nuke_windows: C:\Program Files\Nuke11.1v3\Nuke11.1.exe
+nuke_linux: Nuke11.1
+
+#
+# Maya
+#
+maya_windows: 'C:\Program Files\Autodesk\Maya2018\bin\maya.exe'
+maya_mac: /Applications/Autodesk/maya2018/Maya.app
+maya_linux: maya
+
+#
+# Houdini
+#
+houdini_mac: /Applications/Houdini 15.5.565/Houdinifx.app
+houdini_windows: 'C:\Program Files\Side Effects Software\Houdini 15.5.565\bin\houdinifx.exe'
+houdini_linux: '/opt/hfs15.0.244.16/bin/houdini'
+
+#
+# Photoshop CC
+#
+photoshop_mac: /Applications/Adobe Photoshop CC 2018/Adobe Photoshop CC 2018.app
+photoshop_win: 'C:\Program Files\Adobe\Adobe Photoshop CC 2018\Photoshop.exe'
+
+#
+# ZBrush
+#
+zbrush_mac: /Applications/Pixologic/Zbrush/Zbrush_probably.app
+zbrush_win: 'C:\Program Files\Pixologic\ZBrush 4R8 FL\ZBrush.exe'
+zbrush_linux: zBrush
+
+#
+# Mudbox
+#
+mudbox_mac: /Applications/Autodesk/Mudbox.app
+mudbox_win: 'C:\Program Files\Autodesk\Mudbox 2016 Ext 1\mudbox.exe'
+mudbox_linux: Mudbox
+
+#
+# Keyshot
+#
+keyshot_win: 'C:\Program Files\KeyShot6 Floating\bin\keyshot6_floating.exe'
+keyshot_mac: /Applications/Keyshot.app
+keyshot_linux: Keyshot
+
+#
+# DAZ
+#
+daz_win: 'C:\Program Files\DAZ 3D\DAZStudio4\DAZStudio.exe'
+daz_mac: /Applications/DAZ.app
+daz_linux: DazMud

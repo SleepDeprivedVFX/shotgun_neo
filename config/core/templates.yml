@@ -76,6 +76,9 @@ keys:
     aov_name:
         type: str
 
+    node:
+        type: str
+
     # these are used by the Hiero exporter and pipeline
     YYYY:
         type: int
@@ -112,6 +115,11 @@ keys:
         shotgun_entity_type: Task
         shotgun_field_name: content
 
+    # For Photoshop
+    layer:
+        type: str
+        alias: layer
+
     # Maya supports two extension types.
     maya_extension:
         type: str
@@ -121,6 +129,56 @@ keys:
         default: ma
         alias: extension
 
+    # reserve a template key for the maya camera name and render layer name
+    maya.camera_name:
+        type: str
+
+    maya.layer_name:
+        type: str
+
+    geo_name:
+        type: str
+
+    # custom keys:
+    #camera:
+    #    type: str
+    channel:
+        type: str
+    #codec:
+    #    type: str
+    #entity:
+    #    type: str
+    file_ext:
+        type: str
+        alias: extension
+    #filter:
+    #    type: str
+    #framebuffer:
+    #    type: str
+    #geo_name:
+    #    type: str
+    pass:
+        type: str
+    sg_step_short_name:
+        type: str
+        shotgun_entity_type: Step
+        shotgun_field_name: short_name
+    grp_name:
+        type: str
+    plate_name:
+        type: str
+    img_ext:
+        type: str
+        choices:
+            dpx: DPX
+            exr: OpenEXR
+            jpg: JPEG
+            png: PNG
+            tga: Targa
+            tif: Tiff
+            obj: OBJ
+            fbx: FBX
+        alias: extension
 #
 # The paths section contains all the the key locations where files are to be stored
 # by Sgtk Apps. Each path is made up of several keys (like {version} or {shot}) and
@@ -141,6 +199,7 @@ paths:
     shot_root: sequences/{Sequence}/{Shot}/{Step}
     asset_root: assets/{sg_asset_type}/{Asset}/{Step}
     sequence_root: sequences/{Sequence}
+    send_today: send/
 
 
     ##########################################################################################
@@ -153,17 +212,17 @@ paths:
 
     # The location of WIP files
     hiero_project_work:
-        definition: 'editorial/work/{name}_v{version}.hrox'
+        definition: 'edit/tasks/edit.main/nukeStudio/{project}_edit.main_{name}_v{version}.hrox'
     hiero_project_work_area:
-        definition: 'editorial/work'
+        definition: 'edit/tasks/edit.main/nukeStudio'
     # The location of backups of WIP files
     hiero_project_snapshot:
-        definition: 'editorial/work/snapshots/{name}_v{version}_{timestamp}.hrox'
-    # The location of published hiero files
+        definition: 'edit/tasks/edit.main/nukeStudio/snapshots/{project}_edit.main_{name}_v{version}.{timestamp}.hrox'
+    # The location of published maya files
     hiero_project_publish:
-        definition: 'editorial/publish/{name}_v{version}.hrox'
+        definition: '@hiero_project_publish_area/{project}_edit.main_{name}_v{version}.hrox'
     hiero_project_publish_area:
-        definition: 'editorial/publish'
+        definition: 'edit/publish/nukeStudio'
 
 
     ##########################################################################################
@@ -175,24 +234,97 @@ paths:
     # Shot level paths
     #
 
+    shot_work_area:
+        definition: '@shot_root/tasks/{task_name}'
+    shot_publish_area:
+        definition: '@shot_root/publish'
+
+    shot_comp_publish_area:
+        definition: '@shot_publish_area/comps/'
+    shot_composite_output_dpx:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.{SEQ}.dpx'
+    shot_composite_output_exr:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.{SEQ}.exr'
+    shot_composite_output_jpg:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.{SEQ}.jpg'
+    shot_composite_output_mov:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.mov'
+    shot_composite_output_png:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.{SEQ}.png'
+    shot_composite_output_tif:
+        definition: '@shot_comp_publish_area/{task_name}/v{version}/{Shot}_v{version}.{SEQ}.tif'
+
+    shot_render_area:
+        definition: '@shot_publish_area/renders/'
+    shot_render_output_dpx:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.{SEQ}.dpx'
+    shot_render_output_exr:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.{SEQ}.exr'
+    shot_render_output_jpg:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.{SEQ}.jpg'
+    shot_render_output_mov:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.mov'
+    shot_render_output_png:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.{SEQ}.png'
+    shot_render_output_tif:
+        definition: '@shot_render_area/{name}/v{version}/{Shot}_{name}_v{version}.{SEQ}.tif'
+
+    shot_precomp_area:
+        definition: '@shot_publish_area/renders/precomp/{Shot}_v{version}/'
+    shot_precomp_output_dpx:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.{SEQ}.dpx'
+    shot_precomp_output_exr:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.{SEQ}.exr'
+    shot_precomp_output_jpg:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.{SEQ}.jpg'
+    shot_precomp_output_mov:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.mov'
+    shot_precomp_output_png:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.{SEQ}.png'
+    shot_precomp_output_tif:
+        definition: '@shot_precomp_area/{task_name}/v{version}/{Shot}_Precomp_v{version}.{SEQ}.tif'
+
+    shot_plate_publish:
+        definition: '@shot_publish_area/plates/v{version}/{Shot}_v{version}[.{SEQ}].exr'
+
+    shot_texture_publish_area:
+        definition: '@shot_publish_area/textures'
+    shot_texture_publish:
+        definition: '@shot_texture_publish_area/{name}/{name}_{channel}_v{version}.{img_ext}'
+    shot_udim_publish:
+        definition: '@shot_texture_publish_area/{name}/{name}_{channel}_v{version}.{UDIM}.{img_ext}'
+
+    shot_geo_publish:
+        definition: '@shot_publish_area/geo/{name}/{name}_v{version}.{img_ext}'
+
+    #
+    # Caches
+    #
+    shot_cache_publish_area:
+        definition: '@shot_publish_area/caches'
+    shot_cache_publish:
+        definition: '@shot_cache_publish_area/{name}/v{version}/{name}_v{version}.{SEQ}.{file_ext}'
+    shot_alembic_publish:
+        definition: '@shot_cache_publish_area/alembic/{Shot}_{task_name}_v{version}.abc'
+
     #
     # Flame
     #
 
-    flame_segment_clip:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/clip/sources/{segment_name}.clip'
-    flame_shot_clip:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/clip/{Shot}.clip'
-    flame_shot_batch:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/batch/{Shot}.v{version}.batch'
-    flame_shot_render_dpx:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/renders/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.dpx'
-    flame_shot_render_exr:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/renders/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.exr'
-    flame_shot_comp_dpx:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/comp/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.dpx'
-    flame_shot_comp_exr:
-        definition: 'sequences/{Sequence}/{Shot}/finishing/comp/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.exr'
+#    flame_segment_clip:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/clip/sources/{segment_name}.clip'
+#    flame_shot_clip:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/clip/{Shot}.clip'
+#    flame_shot_batch:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/batch/{Shot}.v{version}.batch'
+#    flame_shot_render_dpx:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/renders/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.dpx'
+#    flame_shot_render_exr:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/renders/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.exr'
+#    flame_shot_comp_dpx:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/comp/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.dpx'
+#    flame_shot_comp_exr:
+#        definition: 'sequences/{Sequence}/{Shot}/finishing/comp/{segment_name}_v{version}/{Shot}_{segment_name}_v{version}.{SEQ}.exr'
 
     #
     # Photoshop
@@ -200,17 +332,29 @@ paths:
 
     # The location of WIP files
     photoshop_shot_work:
-        definition: '@shot_root/work/photoshop/{name}.v{version}.psd'
+        definition: '@shot_work_area/photoshop/{Shot}_{task_name}_v{version}.psd'
     shot_work_area_photoshop:
-        definition: '@shot_root/work/photoshop'
+        definition: '@shot_work_area/photoshop'
     # The location of backups of WIP files
     photoshop_shot_snapshot:
-        definition: '@shot_root/work/photoshop/snapshots/{name}.v{version}.{timestamp}.psd'
+        definition: '@shot_work_area/photoshop/snapshots/{Shot}_{task_name}_v{version}.{timestamp}.psd'
     # The location of published files
     shot_publish_area_photoshop:
-        definition: '@shot_root/publish/photoshop'
+        definition: '@shot_publish_area/photoshop/{task_name}'
     photoshop_shot_publish:
-        definition: '@shot_root/publish/photoshop/{name}.v{version}.psd'
+        definition: '@shot_publish_area_photoshop/{Shot}_{task_name}_v{version}.psd'
+    photoshop_shot_image_publish:
+        definition: '@shot_publish_area/textures/{task_name}/{Shot}_{task_name}_v{version}.{file_ext}'
+    photoshop_shot_jpg_publish:
+        definition: '@shot_texture_publish_area/jpg/{task_name}/{Shot}_{task_name}_{layer}_v{version}.jpg'
+    photoshop_shot_png_publish:
+        definition: '@shot_texture_publish_area/png/{task_name}/{Shot}_{task_name}_{layer}_v{version}.png'
+    photoshop_shot_tif_publish:
+        definition: '@shot_texture_publish_area/tif/{task_name}/{Shot}_{task_name}_{layer}_v{version}.tif'
+    photoshop_shot_exr_publish:
+        definition: '@shot_texture_publish_area/exr/{task_name}/{Shot}_{task_name}_{layer}_v{version}.exr'
+    photoshop_shot_dpx_publish:
+        definition: 'shot_texture_publish_area/dpx/{task_name}/{Shot}_{task_name}_{layer}_v{version}.dpx'
 
 
     #
@@ -219,19 +363,25 @@ paths:
 
     # define the location of a work area
     shot_work_area_maya:
-        definition: '@shot_root/work/maya'
+        definition: '@shot_work_area/maya'
     # define the location of a publish area
     shot_publish_area_maya:
-        definition: '@shot_root/publish/maya'
+        definition: '@shot_publish_area/maya/{task_name}'
     # The location of WIP files
     maya_shot_work:
-        definition: '@shot_root/work/maya/{name}.v{version}.{maya_extension}'
+        definition: '@shot_work_area_maya/{Shot}_{task_name}_v{version}.{maya_extension}'
     # The location of backups of WIP files
     maya_shot_snapshot:
-        definition: '@shot_root/work/maya/snapshots/{name}.v{version}.{timestamp}.{maya_extension}'
+        definition: '@shot_work_area_maya/snapshots/{Shot}_{task_name}_v{version}.{timestamp}.{maya_extension}'
     # The location of published maya files
     maya_shot_publish:
-        definition: '@shot_root/publish/maya/{name}.v{version}.{maya_extension}'
+        definition: '@shot_publish_area_maya/{Shot}_{task_name}_v{version}.{maya_extension}'
+    maya_shot_playblast:
+        definition: '@shot_publish_area/playblasts/maya/{Shot}_{task_name}_v{version}.mov'
+    maya_shot_render:
+        definition: '@shot_publish_area/renders/{task_name}/{maya.layer_name}/v{version}/{maya.layer_name}_{name}.{SEQ}.exr'
+    maya_shot_camera:
+        definition: '@shot_publish_area/elements/cameras/{geo_name}.v{version}.abc'
 
 
     #
@@ -240,36 +390,38 @@ paths:
 
     # define the location of a work area
     shot_work_area_houdini:
-        definition: '@shot_root/work/houdini'
+        definition: '@shot_work_area/houdini'
     # define the location of a publish area
     shot_publish_area_houdini:
-        definition: '@shot_root/publish/houdini'
+        definition: '@shot_publish_area/houdini/{task_name}'
     # The location of WIP files
     houdini_shot_work:
-        definition: '@shot_root/work/houdini/{name}.v{version}.hip'
+        definition: '@shot_work_area_houdini/{Shot}_{task_name}_v{version}.hip'
     # The location of backups of WIP files
     houdini_shot_snapshot:
-        definition: '@shot_root/work/houdini/snapshots/{name}.v{version}.{timestamp}.hip'
+        definition: '@shot_work_area_houdini/snapshots/{Shot}_{task_name}_v{version}.{timestamp}.hip'
     # The location of published houdini files
     houdini_shot_publish:
-        definition: '@shot_root/publish/houdini/{name}.v{version}.hip'
+        definition: '@shot_publish_area_houdini/{Shot}_{task_name}_v{version}.hip'
     # Alembic caches
     houdini_shot_work_alembic_cache:
-        definition: '@shot_root/work/houdini/cache/alembic/{name}/{houdini.node}/v{version}/{Shot}_{name}_v{version}.abc'
+        definition: '@shot_work_area/publish/caches/alembic/{houdini.node}/{houdini.node}_v{version}.abc'
+    houdini_shot_playblast:
+        definition: '@shot_publish_area/playblasts/houdini/{Shot}_{task_name}_v{version}.mov'
 
     # Rendered images
     houdini_shot_render:
-        definition: '@shot_root/work/images/{name}/{houdini.node}/v{version}/{width}x{height}/{Shot}_{name}_v{version}.{SEQ}.exr'
+        definition: '@shot_publish_area/renders/{task_name}/{houdini.node}/v{version}/{Shot}_{task_name}_v{version}.{SEQ}.exr'
 
     # Additional mantra outputs
     houdini_shot_ifd:
-        definition: '@shot_root/work/ifds/{name}/{houdini.node}/v{version}/{width}x{height}/{Shot}_{name}_v{version}.{SEQ}.ifd'
+        definition: '@shot_work_area_houdini/ifd/v{version}/{Shot}_{task_name}_v{version}.{SEQ}.ifd'
 
     houdini_shot_dcm:
-        definition: '@shot_root/work/dcms/{name}/{houdini.node}/v{version}/{width}x{height}/{Shot}_{name}_v{version}.{SEQ}.dcm'
+        definition: '@shot_work_area_houdini/dcm/v{version}/{Shot}_{task_name}_v{version}.{SEQ}.dcm'
 
     houdini_shot_extra_plane:
-        definition: '@shot_root/work/images/{name}/{houdini.node}/{aov_name}/v{version}/{width}x{height}/{Shot}_{name}_v{version}.{SEQ}.exr'
+        definition: '@shot_publish_area/renders/{task_name}/{houdini.node}/{aov_name}/v{version}/{Shot}_{task_name}_{aov_name}_v{version}.{SEQ}.exr'
 
 
     #
@@ -277,41 +429,41 @@ paths:
     #
 
     # define the location of a work area
-    shot_work_area_max:
-        definition: '@shot_root/work/3dsmax'
-    # define the location of a publish area
-    shot_publish_area_max:
-        definition: '@shot_root/publish/3dsmax'
-    # The location of WIP files
-    max_shot_work:
-        definition: '@shot_root/work/3dsmax/{name}.v{version}.max'
-    # The location of backups of WIP files
-    max_shot_snapshot:
-        definition: '@shot_root/work/3dsmax/snapshots/{name}.v{version}.{timestamp}.max'
-    # The location of published max files
-    max_shot_publish:
-        definition: '@shot_root/publish/3dsmax/{name}.v{version}.max'
+#    shot_work_area_max:
+#        definition: '@shot_root/work/3dsmax'
+#    # define the location of a publish area
+#    shot_publish_area_max:
+#        definition: '@shot_root/publish/3dsmax'
+#    # The location of WIP files
+#    max_shot_work:
+#        definition: '@shot_root/work/3dsmax/{name}.v{version}.max'
+#    # The location of backups of WIP files
+#    max_shot_snapshot:
+#        definition: '@shot_root/work/3dsmax/snapshots/{name}.v{version}.{timestamp}.max'
+#    # The location of published max files
+#    max_shot_publish:
+#        definition: '@shot_root/publish/3dsmax/{name}.v{version}.max'
 
 
     #
     # Motionbuilder
     #
 
-    # define the location of a work area
-    shot_work_area_mobu:
-        definition: '@shot_root/work/mobu'
-    # define the location of a publish area
-    shot_publish_area_mobu:
-        definition: '@shot_root/publish/mobu'
-    # The location of WIP files
-    mobu_shot_work:
-        definition: '@shot_root/work/mobu/{name}.v{version}.fbx'
-    # The location of backups of WIP files
-    mobu_shot_snapshot:
-        definition: '@shot_root/work/mobu/snapshots/{name}.v{version}.{timestamp}.fbx'
-    # The location of published mobu files
-    mobu_shot_publish:
-        definition: '@shot_root/publish/mobu/{name}.v{version}.fbx'
+#    # define the location of a work area
+#    shot_work_area_mobu:
+#        definition: '@shot_root/work/mobu'
+#    # define the location of a publish area
+#    shot_publish_area_mobu:
+#        definition: '@shot_root/publish/mobu'
+#    # The location of WIP files
+#    mobu_shot_work:
+#        definition: '@shot_root/work/mobu/{name}.v{version}.fbx'
+#    # The location of backups of WIP files
+#    mobu_shot_snapshot:
+#        definition: '@shot_root/work/mobu/snapshots/{name}.v{version}.{timestamp}.fbx'
+#    # The location of published mobu files
+#    mobu_shot_publish:
+#        definition: '@shot_root/publish/mobu/{name}.v{version}.fbx'
 
 
     #
@@ -320,33 +472,35 @@ paths:
 
     # define the location of a work area
     shot_work_area_nuke:
-        definition: '@shot_root/work/nuke'
+        definition: '@shot_work_area/nuke'
     # define the location of a publish area
     shot_publish_area_nuke:
-        definition: '@shot_root/publish/nuke'
+        definition: '@shot_publish_area/nuke/{task_name}'
     # The location of WIP script files
     nuke_shot_work:
-        definition: '@shot_root/work/nuke/{name}.v{version}.nk'
+        definition: '@shot_work_area_nuke/{Shot}_{task_name}_v{version}.nk'
     # The location of backups of WIP files
     nuke_shot_snapshot:
-        definition: '@shot_root/work/nuke/snapshots/{name}.v{version}.{timestamp}.nk'
+        definition: '@shot_work_area_nuke/snapshots/{Shot}_{task_name}_v{version}.{timestamp}.nk'
     # The location of published nuke script files
     nuke_shot_publish:
-        definition: '@shot_root/publish/nuke/{name}.v{version}.nk'
+        definition: '@shot_publish_area_nuke/{Shot}_{task_name}_v{version}.nk'
     # write node outputs
     nuke_shot_render_mono_dpx:
-        definition: '@shot_root/work/images/{name}/v{version}/{width}x{height}/{Shot}_{name}_{nuke.output}_v{version}.{SEQ}.dpx'
+        definition: '@shot_publish_area/comps/v{version}/{Shot}_{task_name}_{nuke.output}_v{version}.{SEQ}.dpx'
     nuke_shot_render_pub_mono_dpx:
         definition: '@shot_root/publish/elements/{name}/v{version}/{width}x{height}/{Shot}_{name}_{nuke.output}_v{version}.{SEQ}.dpx'
     nuke_shot_render_stereo:
-        definition: '@shot_root/work/images/{name}/v{version}/{width}x{height}/{Shot}_{name}_{nuke.output}_{eye}_v{version}.{SEQ}.exr'
+        definition: '@shot_publish_area/comps/v{version}/{eye}/{Shot}_{task_name}_{nuke.output}_v{version}.{SEQ}.dpx'
     nuke_shot_render_pub_stereo:
         definition: '@shot_root/publish/elements/{name}/v{version}/{width}x{height}/{Shot}_{name}_{nuke.output}_{eye}_v{version}.{SEQ}.exr'
     # review output
     shot_quicktime_quick:
-        definition: '@shot_root/review/quickdaily/{Shot}_{name}_{iteration}.mov'
+        definition: '@shot_root/publish/renders/quickdaily/{Shot}_{task_name}_{iteration}.mov'
     nuke_shot_render_movie:
-        definition: '@shot_root/review/{Shot}_{name}_{nuke.output}_v{version}.mov'
+        definition: '@shot_root/publish/renders/{Shot}_{task_name}_{nuke.output}_v{version}.mov'
+    nuke_shot_review_movie:
+        definition: '@shot_publish_area/playblasts/nuke/{Shot}_{task_name}_v{version}.mov'
 
     #
     # Hiero
@@ -354,20 +508,83 @@ paths:
 
     # export of shot asset data from hiero
     hiero_plate_path:
-        definition: 'sequences/{Sequence}/{Shot}/editorial/{YYYY}_{MM}_{DD}/plates/{project}_{Shot}.mov'
+        definition: '@shot_publish_area/plates/{YYYY}_{MM}_{DD}/{project}_{Shot}.mov'
     hiero_render_path:
-        definition: 'sequences/{Sequence}/{Shot}/editorial/{YYYY}_{MM}_{DD}/renders/{project}_{Shot}.{SEQ}.dpx'
+        definition: '@shot_publish_area/edits/interchange/v{version}/{project}_{Shot}.{SEQ}.dpx'
 
     ##########################################################################################
     # Asset pipeline
 
+    asset_work_area:
+        definition: '@asset_root/tasks/{task_name}'
+    asset_publish_area:
+        definition: '@asset_root/publish'
+    asset_comp_publish_area:
+        definition: '@asset_publish_area/comps/{Asset}_v{version}/'
+    asset_composite_output_dpx:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.{SEQ}.dpx'
+    asset_composite_output_exr:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.{SEQ}.exr'
+    asset_composite_output_jpg:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.{SEQ}.jpg'
+    asset_composite_output_mov:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.mov'
+    asset_composite_output_png:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.{SEQ}.png'
+    asset_composite_output_tif:
+        definition: '@asset_comp_publish_area/{Asset}_v{version}.{SEQ}.tif'
+
+
+    asset_render_area:
+        definition: '@asset_publish_area/renders'
+    asset_render_output_dpx:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.dpx'
+    asset_render_output_exr:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.exr'
+    asset_render_output_jpg:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.jpg'
+    asset_render_output_mov:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.mov'
+    asset_render_output_png:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.png'
+    asset_render_output_tif:
+        definition: '@asset_render_area/{task_name}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.tif'
+
+    asset_plate_publish:
+        definition: '@asset_publish_area/plates/v{version}/{Asset}_v{version}[.{SEQ}].{file_ext}'
+
+    asset_texture_publish_area:
+        definition: '@asset_publish_area/textures'
+    asset_texture_publish:
+        definition: '@asset_texture_publish_area/{task_name}/{name}_{channel}_v{version}.{img_ext}'
+    asset_udim_publish:
+        definition: '@asset_texture_publish_area/{task_name}/{name}_{channel}_v{version}.{UDIM}.{img_ext}'
+
+    #
+    # Geometry
+    #
+    asset_geo_publish:
+        definition: '@asset_publish_area/geo/{task_name}/{Asset}_{task_name}_v{version}.{img_ext}'
+    asset_obj_publish:
+        definition: '@asset_publish_area/geo/OBJ/{task_name}/{Asset}_{task_name}_v{version}.obj'
+    #
+    # Caches
+    #
+    asset_cache_publish_area:
+        definition: '@asset_publish_area/caches'
+    asset_cache_publish:
+        definition: '@asset_cache_publish_area/{task_name}/v{version}/{task_name}_v{version}.{SEQ}.{file_ext}'
+    asset_alembic_publish:
+        definition: '@asset_cache_publish_area/{node}/v{version}/{node}_v{version}.abc'
+    asset_cache_area:
+        definition: '@asset_cache_publish_area/{task_name}/v{version}/{task_name}_v{version}.{file_ext}'
 
     #
     # Alembic caches
     #
 
     asset_alembic_cache:
-        definition: '@asset_root/publish/caches/{name}.v{version}.abc'
+        definition: '@asset_root/publish/caches/alembic/{Asset}_{task_name}_v{version}.abc'
 
 
     #
@@ -376,24 +593,39 @@ paths:
 
     # The location of WIP files
     photoshop_asset_work:
-        definition: '@asset_root/work/photoshop/{name}.v{version}.psd'
+        definition: '@asset_work_area/photoshop/{Asset}_{task_name}_v{version}.psd'
     asset_work_area_photoshop:
-        definition: '@asset_root/work/photoshop'
+        definition: '@asset_work_area/photoshop'
     # The location of backups of WIP files
     photoshop_asset_snapshot:
-        definition: '@asset_root/work/photoshop/snapshots/{name}.v{version}.{timestamp}.psd'
+        definition: '@asset_work_area_photoshop/Snapshots/{Asset}_{task_name}_v{version}.{timestamp}.psd'
     # The location of published files
     asset_publish_area_photoshop:
-        definition: '@asset_root/publish/photoshop'
+        definition: '@asset_publish_area/photoshop/{task_name}'
     photoshop_asset_publish:
-        definition: '@asset_root/publish/photoshop/{name}.v{version}.psd'
+        definition: '@asset_publish_area_photoshop/{Asset}_{task_name}_v{version}.psd'
+    photoshop_asset_image_publish:
+        definition: '@asset_publish_area/textures/{task_name}/{Asset}_{task_name}_v{version}.{file_ext}'
+    photoshop_asset_jpg_publish:
+        definition: '@asset_texture_publish_area/jpg/{task_name}/{Asset}_{task_name}_{layer}_v{version}.jpg'
+    photoshop_asset_png_publish:
+        definition: '@asset_texture_publish_area/png/{task_name}/{Asset}_{task_name}_{layer}_v{version}.png'
+    photoshop_asset_tif_publish:
+        definition: '@asset_texture_publish_area/tif/{task_name}/{Asset}_{task_name}_{layer}_v{version}.tif'
+    photoshop_asset_exr_publish:
+        definition: '@asset_texture_publish_area/exr/{task_name}/{Asset}_{task_name}_{layer}_v{version}.exr'
+    photoshop_asset_dpx_publish:
+        definition: '@asset_texture_publish_area/dpx/{task_name}/{Asset}_{task_name}_{layer}_v{version}.dpx'
 
+    # Send today JPG publish
+    photoshop_send_jpg_publish:
+        definition: '@send_today{YYYY}-{MM}-{DD}'
 
     #
     # Mari
     #
     asset_mari_texture_tif:
-        definition: '@asset_root/publish/mari/{name}_{mari.channel}[_{mari.layer}].v{version}.{UDIM}.tif'
+        definition: '@asset_root/publish/textures/{Asset}/{Asset}_{task_name}_{mari.channel}[_{mari.layer}].v{version}.{UDIM}.tif'
 
     #
     # Maya
@@ -401,19 +633,23 @@ paths:
 
     # define the location of a work area
     asset_work_area_maya:
-        definition: '@asset_root/work/maya'
+        definition: '@asset_work_area/maya'
     # define the location of a publish area
     asset_publish_area_maya:
-        definition: '@asset_root/publish/maya'
+        definition: '@asset_publish_area/maya/{task_name}'
     # The location of WIP files
     maya_asset_work:
-        definition: '@asset_root/work/maya/{name}.v{version}.{maya_extension}'
+        definition: '@asset_work_area_maya/{Asset}_{task_name}_v{version}.{maya_extension}'
     # The location of backups of WIP files
     maya_asset_snapshot:
-        definition: '@asset_root/work/maya/snapshots/{name}.v{version}.{timestamp}.{maya_extension}'
+        definition: '@asset_work_area_maya/snapshots/{Asset}_{task_name}_v{version}.{timestamp}.{maya_extension}'
     # The location of published maya files
     maya_asset_publish:
-        definition: '@asset_root/publish/maya/{name}.v{version}.{maya_extension}'
+        definition: '@asset_publish_area_maya/{Asset}_{task_name}_v{version}.{maya_extension}'
+    maya_asset_playblast:
+        definition: '@asset_publish_area/playblasts/maya/{Asset}_{task_name}_v{version}.mov'
+    maya_asset_shader_network:
+        definition: '@asset_root/publish/elements/shaders/{Asset}/{Asset}_{name}_{task_name}_shd_v{version}.mb'
 
 
     #
@@ -422,79 +658,81 @@ paths:
 
     # define the location of a work area
     asset_work_area_houdini:
-        definition: '@asset_root/work/houdini'
+        definition: '@asset_work_area/houdini'
     # define the location of a publish area
     asset_publish_area_houdini:
-        definition: '@asset_root/publish/houdini'
+        definition: '@asset_publish_area/houdini/{task_name}'
     # The location of WIP files
     houdini_asset_work:
-        definition: '@asset_root/work/houdini/{name}.v{version}.hip'
+        definition: '@asset_work_area_houdini/{Asset}_{task_name}_v{version}.hip'
     # The location of backups of WIP files
     houdini_asset_snapshot:
-        definition: '@asset_root/work/houdini/snapshots/{name}.v{version}.{timestamp}.hip'
+        definition: '@asset_work_area_houdini/snapshots/{Asset}_{task_name}_v{version}.{timestamp}.hip'
     # The location of published houdini files
     houdini_asset_publish:
-        definition: '@asset_root/publish/houdini/{name}.v{version}.hip'
+        definition: '@asset_publish_area_houdini/{Asset}_{task_name}_v{version}.hip'
     # Alembic caches
     houdini_asset_work_alembic_cache:
-        definition: '@asset_root/work/houdini/cache/alembic/{name}/{houdini.node}/v{version}/{Asset}_{name}_v{version}.abc'
+        definition: '@asset_work_area_houdini/alembic/{houdini.node}/{houdini.node}_v{version}.abc'
 
     # Rendered images
     houdini_asset_render:
-        definition: '@asset_root/work/images/{name}/{houdini.node}/v{version}/{width}x{height}/{Asset}_{name}_v{version}.{SEQ}.exr'
+        definition: '@asset_render_area/{task_name}/v{version}/{houdini.node}_{task_name}_v{version}.{SEQ}.exr'
+    houdini_asset_playblast:
+        definition: '@asset_publish_area/playblasts/houdini/{Asset}_{task_name}_v{version}.mov'
 
     # Additional mantra outputs
     houdini_asset_ifd:
-        definition: '@asset_root/work/ifds/{name}/{houdini.node}/v{version}/{width}x{height}/{Asset}_{name}_v{version}.{SEQ}.ifd'
+        definition: '@houdini_asset_work_area/ifds/{houdini.node}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.ifd'
 
     houdini_asset_dcm:
-        definition: '@asset_root/work/dcms/{name}/{houdini.node}/v{version}/{width}x{height}/{Asset}_{name}_v{version}.{SEQ}.dcm'
+        definition: 'houdini_asset_work_area/dcms/{houdini.node}/v{version}/{Asset}_{task_name}_v{version}.{SEQ}.dcm'
 
     houdini_asset_extra_plane:
-        definition: '@asset_root/work/images/{name}/{houdini.node}/{aov_name}/v{version}/{width}x{height}/{Asset}_{name}_v{version}.{SEQ}.exr'
+        definition: '@asset_publish_area/renders/{houdini.node}.extraPlane/v{version}/{Asset}_{houdini.node}.extraPlane_v{version}.{SEQ}.exr'
 
 
     #
     # 3dsmax
     #
-
-    # define the location of a work area
-    asset_work_area_max:
-        definition: '@asset_root/work/3dsmax'
-    # define the location of a publish area
-    asset_publish_area_max:
-        definition: '@asset_root/publish/3dsmax'
-    # The location of WIP files
-    max_asset_work:
-        definition: '@asset_root/work/3dsmax/{name}.v{version}.max'
-    # The location of backups of WIP files
-    max_asset_snapshot:
-        definition: '@asset_root/work/3dsmax/snapshots/{name}.v{version}.{timestamp}.max'
-    # The location of published max files
-    max_asset_publish:
-        definition: '@asset_root/publish/3dsmax/{name}.v{version}.max'
-
-
-    #
-    # Motionbuilder
-    #
-
-    # define the location of a work area
-    asset_work_area_mobu:
-        definition: '@asset_root/work/mobu'
-    # define the location of a publish area
-    asset_publish_area_mobu:
-        definition: '@asset_root/publish/mobu'
-    # The location of WIP files
-    mobu_asset_work:
-        definition: '@asset_root/work/mobu/{name}.v{version}.fbx'
-    # The location of backups of WIP files
-    mobu_asset_snapshot:
-        definition: '@asset_root/work/mobu/snapshots/{name}.v{version}.{timestamp}.fbx'
-    # The location of published Motionbuilder files
-    mobu_asset_publish:
-        definition: '@asset_root/publish/mobu/{name}.v{version}.fbx'
-
+#
+#    # define the location of a work area
+#    asset_work_area_max:
+#        definition: '@asset_root/work/3dsmax'
+#    # define the location of a publish area
+#    asset_publish_area_max:
+#        definition: '@asset_root/publish/3dsmax'
+#    # The location of WIP files
+#    max_asset_work:
+#        definition: '@asset_root/work/3dsmax/{name}.v{version}.max'
+#    # The location of backups of WIP files
+#    max_asset_snapshot:
+#        definition: '@asset_root/work/3dsmax/snapshots/{name}.v{version}.{timestamp}.max'
+#    # The location of published max files
+#    max_asset_publish:
+#        definition: '@asset_root/publish/3dsmax/{name}.v{version}.max'
+#
+#
+#    #
+#    # Motionbuilder
+#    #
+#
+#    # define the location of a work area
+#    asset_work_area_mobu:
+#        definition: '@asset_root/work/mobu'
+#    # define the location of a publish area
+#    asset_publish_area_mobu:
+#        definition: '@asset_root/publish/mobu'
+#    # The location of WIP files
+#    mobu_asset_work:
+#        definition: '@asset_root/work/mobu/{name}.v{version}.fbx'
+#    # The location of backups of WIP files
+#    mobu_asset_snapshot:
+#        definition: '@asset_root/work/mobu/snapshots/{name}.v{version}.{timestamp}.fbx'
+#    # The location of published Motionbuilder files
+#    mobu_asset_publish:
+#        definition: '@asset_root/publish/mobu/{name}.v{version}.fbx'
+#
 
     #
     # Nuke
@@ -505,7 +743,7 @@ paths:
         definition: '@asset_root/work/nuke'
     # define the location of a publish area
     asset_publish_area_nuke:
-        definition: '@asset_root/publish'
+        definition: '@asset_root/publish/nuke/{task_name}'
     # outputs from the Shotgun Write Node for assets
     nuke_asset_render:
         definition: '@asset_root/work/images/{name}/v{version}/{width}x{height}/{Asset}_{name}_{nuke.output}_v{version}.{SEQ}.exr'
@@ -513,15 +751,15 @@ paths:
         definition: '@asset_root/publish/elements/{name}/v{version}/{width}x{height}/{Asset}_{name}_{nuke.output}_v{version}.{SEQ}.exr'
     # review output
     nuke_asset_render_movie:
-        definition: '@asset_root/review/{Asset}_{name}_{nuke.output}_v{version}.mov'
+        definition: '@asset_publish_area/playblasts/nuke/{Asset}_{task_name}_v{version}.mov'
     asset_quicktime_quick:
-        definition: '@asset_root/review/quickdaily/{Asset}_{name}_{iteration}.mov'
+        definition: '@asset_publish_area/playblasts/nuke/{Asset}_{task_name}_v{version}_{iteration}.mov'
     # The location of WIP script files
     nuke_asset_work:
-        definition: '@asset_root/work/nuke/{name}.v{version}.nk'
+        definition: '@asset_work_area_nuke/{Asset}_{task_name}_v{version}.nk'
     # The location of backups of WIP files
     nuke_asset_snapshot:
-        definition: '@asset_root/work/nuke/snapshots/{name}.v{version}.{timestamp}.nk'
+        definition: '@asset_work_area_nuke/snapshots/{Asset}_{task_name}_v{version}.{timestamp}.nk'
     # The location of published nuke script files
     nuke_asset_publish:
         definition: '@asset_root/publish/nuke/{name}.v{version}.nk'
@@ -549,3 +787,17 @@ strings:
 
     # define how new Mari projects should be named
     mari_asset_project_name: "{mari.project_name} - Asset {asset_name}, {task_name}"
+
+    # Strings for publish file script
+#    asset_rendered_image_publish_name: '{Asset}.{name}'
+#    asset_rendered_image_publish_comment: '{file_ext} sequence for asset {Asset}, pass {name}, automatically registered by tk-shotgun-publishrenders'
+#    asset_plate_publish_name: "{Asset}_plate-{file_ext}"
+#    asset_plate_publish_comment: "{Asset} Plate - {file_ext} Sequence"
+    rendered_image_publish_name: '{Shot}.{name}'
+    rendered_image_publish_comment: '{file_ext} sequence for pass {name}, automatically registered by tk-shotgun-publishrenders'
+    plate_publish_name: "{Shot}_plate-{file_ext}"
+    plate_publish_comment: "{Shot} Plate - {file_ext} Sequence"
+    comp_publish_name: "{Shot} Composite"
+    comp_publish_comment: "{Shot} Composited Image v{version}"
+    asset_comp_publish_name: "{Asset} Composite"
+    asset_comp_publish_comment: "{Asset} Composited Image v{version}"
