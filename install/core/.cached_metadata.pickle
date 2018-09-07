@@ -4,11 +4,11 @@ p2
 (dp3
 S'code'
 p4
-S'v0.18.148'
+S'v0.18.151'
 p5
 sS'description'
 p6
-S'Site urls are now lowercased during sanitization when logging into Shotgun.'
+S'Documentation improvements.'
 p7
 sS'tags'
 p8
@@ -18,11 +18,11 @@ p10
 (dp11
 S'name'
 p12
-S'sgtk_core_v0.18.148.zip'
+S'sgtk_core_v0.18.151.zip'
 p13
 sS'url'
 p14
-S'https://tank.shotgunstudio.com/file_serve/attachment/19988'
+S'https://tank.shotgunstudio.com/file_serve/attachment/20220'
 p15
 sS'content_type'
 p16
@@ -34,7 +34,7 @@ S'Attachment'
 p19
 sS'id'
 p20
-I19988
+I20220
 sS'link_type'
 p21
 S'upload'
@@ -48,11 +48,11 @@ p25
 (dp26
 S'name'
 p27
-S'v0.18.148'
+S'v0.18.151'
 p28
 sS'url'
 p29
-S'https://support.shotgunsoftware.com/hc/en-us/articles/219039838#v0.18.148'
+S'https://support.shotgunsoftware.com/hc/en-us/articles/219039838#v0.18.151'
 p30
 sS'content_type'
 p31
@@ -62,7 +62,7 @@ S'Attachment'
 p33
 sS'id'
 p34
-I19986
+I20218
 sS'link_type'
 p35
 S'web'
@@ -86,7 +86,7 @@ S'Attachment'
 p45
 sS'id'
 p46
-I19987
+I20219
 sS'link_type'
 p47
 S'web'
@@ -97,7 +97,7 @@ S'CustomNonProjectEntity01'
 p50
 sS'id'
 p51
-I647
+I682
 ssS'sg_bundle_data'
 p52
 Ns.

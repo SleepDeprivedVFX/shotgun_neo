@@ -1,0 +1,28 @@
+# Copyright (c) 2013 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+
+# the type of dynamic content
+type: "static"
+
+# pick one of the shotgun folders that are above this folder
+# in the folder hierarchy.
+constrain_by_entity: "$task"
+
+defer_creation: ["tk-mari"]
+
+# we can now define constraints for this project. Constraints are simple
+# Shotgun queries, following the same syntax as the other shotgun filters
+# shown in previous sections.
+#
+# In our example, if the parent project matches the constraints given
+# in the filter below, the static folder will be created. If not,
+# it (and its children) will be ignored by the folder creation process.
+constraints:
+    - { "path": "step.Step.short_name", "relation": "in", "values": [ "lookdev","design" ] }
