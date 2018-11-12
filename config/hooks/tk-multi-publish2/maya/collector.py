@@ -113,6 +113,8 @@ class MayaSessionCollector(HookBaseClass):
         if cmds.ls(geometry=True, noIntermediate=True):
             self._collect_session_geometry(item)
 
+        self._collect_meshes(item)
+
     def collect_current_maya_session(self, settings, parent_item):
         """
         Creates an item that represents the current maya session.
@@ -340,3 +342,48 @@ class MayaSessionCollector(HookBaseClass):
                 # the item has been created. update the display name to include
                 # the an indication of what it is and why it was collected
                 item.name = "%s (Render Layer: %s)" % (item.name, layer)
+
+    def _collect_meshes(self, parent_item):
+       """
+       Collect mesh definitions and create publish items for them.
+
+       :param parent_item: The maya session parent item
+       """
+
+       # build a path for the icon to use for each item. the disk
+       # location refers to the path of this hook file. this means that
+       # the icon should live one level above the hook in an "icons"
+       # folder.
+       icon_path = os.path.join(
+           self.disk_location,
+           os.pardir,
+           "icons",
+           "mesh.png"
+       )
+
+       # iterate over all top-level transforms and create mesh items
+       # for any mesh.
+       for object in cmds.ls(assemblies=True):
+
+           if not cmds.ls(object, dag=True, type="mesh"):
+               # ignore non-meshes
+               continue
+
+           # create a new item parented to the supplied session item. We
+           # define an item type (maya.session.mesh) that will be
+           # used by an associated shader publish plugin as it searches for
+           # items to act upon. We also give the item a display type and
+           # display name (the group name). In the future, other publish
+           # plugins might attach to these mesh items to publish other things
+           mesh_item = parent_item.create_item(
+               "maya.session.mesh",
+               "Mesh",
+               object
+           )
+
+           # set the icon for the item
+           mesh_item.set_icon_from_path(icon_path)
+
+           # finally, add information to the mesh item that can be used
+           # by the publish plugin to identify and export it properly
+           mesh_item.properties["object"] = object
