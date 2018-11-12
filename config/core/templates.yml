@@ -651,6 +651,9 @@ paths:
     maya_asset_shader_network:
         definition: '@asset_root/publish/elements/shaders/{Asset}/{Asset}_{name}_{task_name}_shd_v{version}.mb'
 
+    teste_balls:
+        definition: '@asset_root/publish/elements/shit_v{version}.jpg'
+
 
     #
     # Houdini

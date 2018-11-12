@@ -7,3 +7,13 @@ settings.tk-blaster.shot_step:
   hook_open_operation: default
   deadline_connection: http://deadline.asc-vfx.com
   deadline_port: 8082
+
+settings.tk-blaster.asset_step:
+  location:
+    version: v0.0.2
+    type: manual
+    name: tk-blaster
+  hook_open_operation: default
+  deadline_connection: http://deadline.asc-vfx.com
+  deadline_port: 8082
+
