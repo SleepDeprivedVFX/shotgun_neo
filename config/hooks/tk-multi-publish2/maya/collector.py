@@ -57,11 +57,6 @@ class MayaSessionCollector(HookBaseClass):
                                "to publish plugins via the collected item's "
                                "properties. ",
             },
-            "Fucked River": {
-                "type": "template",
-                "default": None,
-                "description": "Seeing what it takes to make this work."
-            },
         }
 
         # update the base settings with these settings
@@ -117,8 +112,6 @@ class MayaSessionCollector(HookBaseClass):
 
         if cmds.ls(geometry=True, noIntermediate=True):
             self._collect_session_geometry(item)
-
-        self.fuck_yourself(item)
 
     def collect_current_maya_session(self, settings, parent_item):
         """
@@ -347,21 +340,3 @@ class MayaSessionCollector(HookBaseClass):
                 # the item has been created. update the display name to include
                 # the an indication of what it is and why it was collected
                 item.name = "%s (Render Layer: %s)" % (item.name, layer)
-
-    def fuck_yourself(self, parent_item):
-
-        icon_path = os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "shit.png"
-        )
-
-        dookie = parent_item.create_item(
-            "maya.session.dookie",
-            "Fucked River",
-            "Fucked River"
-        )
-
-        dookie.set_icon_from_path(icon_path)
-        dookie.properties['Fucked River'] = 'Bloated Poop'
